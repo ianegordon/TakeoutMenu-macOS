@@ -1,0 +1,340 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		40C85E5724C4C8320042106A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C85E5624C4C8320042106A /* AppDelegate.swift */; };
+		40C85E5924C4C8320042106A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C85E5824C4C8320042106A /* ViewController.swift */; };
+		40C85E5B24C4C8340042106A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 40C85E5A24C4C8340042106A /* Assets.xcassets */; };
+		40C85E5E24C4C8340042106A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 40C85E5C24C4C8340042106A /* Main.storyboard */; };
+		40C85E6724C4D44A0042106A /* CustomMenuView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 40C85E6624C4D44A0042106A /* CustomMenuView.xib */; };
+		40C85E6924C4D4910042106A /* CustomMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C85E6824C4D4910042106A /* CustomMenuView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		40C85E5324C4C8320042106A /* TakeoutMenu-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TakeoutMenu-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		40C85E5624C4C8320042106A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		40C85E5824C4C8320042106A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		40C85E5A24C4C8340042106A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		40C85E5D24C4C8340042106A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		40C85E5F24C4C8340042106A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		40C85E6024C4C8340042106A /* TakeoutMenu_macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TakeoutMenu_macOS.entitlements; sourceTree = "<group>"; };
+		40C85E6624C4D44A0042106A /* CustomMenuView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomMenuView.xib; sourceTree = "<group>"; };
+		40C85E6824C4D4910042106A /* CustomMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMenuView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		40C85E5024C4C8320042106A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		40C85E4A24C4C8320042106A = {
+			isa = PBXGroup;
+			children = (
+				40C85E5524C4C8320042106A /* TakeoutMenu-macOS */,
+				40C85E5424C4C8320042106A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		40C85E5424C4C8320042106A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				40C85E5324C4C8320042106A /* TakeoutMenu-macOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		40C85E5524C4C8320042106A /* TakeoutMenu-macOS */ = {
+			isa = PBXGroup;
+			children = (
+				40C85E5624C4C8320042106A /* AppDelegate.swift */,
+				40C85E5824C4C8320042106A /* ViewController.swift */,
+				40C85E6824C4D4910042106A /* CustomMenuView.swift */,
+				40C85E6624C4D44A0042106A /* CustomMenuView.xib */,
+				40C85E5A24C4C8340042106A /* Assets.xcassets */,
+				40C85E5C24C4C8340042106A /* Main.storyboard */,
+				40C85E5F24C4C8340042106A /* Info.plist */,
+				40C85E6024C4C8340042106A /* TakeoutMenu_macOS.entitlements */,
+			);
+			path = "TakeoutMenu-macOS";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		40C85E5224C4C8320042106A /* TakeoutMenu-macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 40C85E6324C4C8340042106A /* Build configuration list for PBXNativeTarget "TakeoutMenu-macOS" */;
+			buildPhases = (
+				40C85E4F24C4C8320042106A /* Sources */,
+				40C85E5024C4C8320042106A /* Frameworks */,
+				40C85E5124C4C8320042106A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "TakeoutMenu-macOS";
+			productName = "TakeoutMenu-macOS";
+			productReference = 40C85E5324C4C8320042106A /* TakeoutMenu-macOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		40C85E4B24C4C8320042106A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1160;
+				LastUpgradeCheck = 1160;
+				ORGANIZATIONNAME = "Ian Gordon";
+				TargetAttributes = {
+					40C85E5224C4C8320042106A = {
+						CreatedOnToolsVersion = 11.6;
+					};
+				};
+			};
+			buildConfigurationList = 40C85E4E24C4C8320042106A /* Build configuration list for PBXProject "TakeoutMenu-macOS" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 40C85E4A24C4C8320042106A;
+			productRefGroup = 40C85E5424C4C8320042106A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				40C85E5224C4C8320042106A /* TakeoutMenu-macOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		40C85E5124C4C8320042106A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				40C85E5B24C4C8340042106A /* Assets.xcassets in Resources */,
+				40C85E5E24C4C8340042106A /* Main.storyboard in Resources */,
+				40C85E6724C4D44A0042106A /* CustomMenuView.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		40C85E4F24C4C8320042106A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				40C85E5924C4C8320042106A /* ViewController.swift in Sources */,
+				40C85E5724C4C8320042106A /* AppDelegate.swift in Sources */,
+				40C85E6924C4D4910042106A /* CustomMenuView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		40C85E5C24C4C8340042106A /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				40C85E5D24C4C8340042106A /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		40C85E6124C4C8340042106A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		40C85E6224C4C8340042106A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		40C85E6424C4C8340042106A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "TakeoutMenu-macOS/TakeoutMenu_macOS.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 77VWY9L3Z6;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "TakeoutMenu-macOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.3against2.TakeoutMenu-macOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		40C85E6524C4C8340042106A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "TakeoutMenu-macOS/TakeoutMenu_macOS.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 77VWY9L3Z6;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "TakeoutMenu-macOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.3against2.TakeoutMenu-macOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		40C85E4E24C4C8320042106A /* Build configuration list for PBXProject "TakeoutMenu-macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				40C85E6124C4C8340042106A /* Debug */,
+				40C85E6224C4C8340042106A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		40C85E6324C4C8340042106A /* Build configuration list for PBXNativeTarget "TakeoutMenu-macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				40C85E6424C4C8340042106A /* Debug */,
+				40C85E6524C4C8340042106A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 40C85E4B24C4C8320042106A /* Project object */;
+}
