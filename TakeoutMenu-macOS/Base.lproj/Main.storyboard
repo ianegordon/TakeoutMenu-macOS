@@ -713,7 +713,7 @@
                                 <rect key="frame" x="18" y="-35" width="444" height="230"/>
                                 <textFieldCell key="cell" selectable="YES" id="404-ku-p0B">
                                     <font key="font" usesAppearanceFont="YES"/>
-                                    <mutableString key="title">This example app attempts to demonstrate an issue I'm facing with NSMenuItem.  This app creates a menu in the status bar.  Using standard NSMenuItems, we are able to set isAlternate.  By holding OPTION we can switch out the default for the alternative.    When we enable a customView isAlternative doesn't work as expected.  Instead both the standard and alternative at all times.  Holding OPTION does not toggle between the two as it does with the standard NSMenuItems.</mutableString>
+                                    <mutableString key="title">This example app attempts to demonstrate an issue I'm facing with NSMenuItem. This app creates a menu in the status bar.  Using standard NSMenuItems, we are able to set isAlternate. By holding OPTION we can switch out the default for the alternate.   When we enable a customView isAlternate doesn't work as expected. Instead both the standard and alternate are displayed at all times. Holding OPTION does not toggle between the two as it does with the standard NSMenuItems.</mutableString>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
