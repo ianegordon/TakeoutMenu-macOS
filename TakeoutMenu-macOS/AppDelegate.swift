@@ -29,9 +29,12 @@ import Carbon
 class AppDelegate: NSObject, NSApplicationDelegate {
 
   var eventHandlerRef: EventHandlerRef?
-  var optionModifierEnabled: Bool = false
+
+  let modifierLock = NSLock()
+  var optionModifierEnabled: Bool = false // TODO This should be a proper bitfield
 
   let statusItem: NSStatusItem = NSStatusBar.system.statusItem(withLength:NSStatusItem.variableLength)
+  let menu = NSMenu(title: "<Unused>")
 
   func applicationDidFinishLaunching(_ aNotification: Notification) {
 
@@ -40,19 +43,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // Setup Status Bar
     let iconImage = NSImage.init(named: "StatusBarIcon")
     self.statusItem.button?.image = iconImage
-    self.statusItem.button?.title = "∞"
+    self.statusItem.button?.title = "∞∞∞∞"
     self.statusItem.button?.imagePosition = .imageLeading
     self.statusItem.button?.target = self
     self.statusItem.button?.action = #selector(statusBarClicked)
 
-    // Generate Menu
+    // Attach Menu
+    self.statusItem.menu = menu
     self.generateMenu()
 
     // Attach Carbon Event Listener / Handler
-    performWithCarbonEventHandling( {
-      debugPrint("Block")
-    }
-    )
+    attachCarbonEventHandler()
+
+    //KM
+//    performWithCarbonEventHandling( {
+//      debugPrint("Block")
+//    }
+//    )
   }
 
   func applicationWillTerminate(_ aNotification: Notification) {
@@ -73,6 +80,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     print("optionMenuItemClicked")
   }
 
+  @objc func controlMenuItemClicked() {
+    print("controlMenuItemClicked")
+  }
+
   @objc func quitClicked() {
     print("quitClicked")
 
@@ -83,7 +94,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   // MARK: Internal
   func generateMenu() {
-    let menu = NSMenu(title: "<Unused>")
+//    menu = NSMenu(title: "<Unused>")
+    menu.removeAllItems()
     menu.autoenablesItems = false
 
     // Basic
@@ -94,11 +106,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       let standardItem = NSMenuItem(title: title, action: #selector(menuItemClicked), keyEquivalent: key)
       menu.addItem(standardItem)
 
-      let optionTitle = "OPTION + " + title
-      let optionItem = NSMenuItem(title: optionTitle, action: #selector(optionMenuItemClicked), keyEquivalent: key)
-      optionItem.isAlternate = true
-      optionItem.keyEquivalentModifierMask = [ .option ]
-      menu.addItem(optionItem)
+//      let optionTitle = "OPTION + " + title
+//      let optionItem = NSMenuItem(title: optionTitle, action: #selector(optionMenuItemClicked), keyEquivalent: key)
+//      optionItem.isAlternate = true
+//      optionItem.keyEquivalentModifierMask = [ .option ]
+//      menu.addItem(optionItem)
+
+      let controlTitle = "CONTROL + " + title
+      let controlItem = NSMenuItem(title: controlTitle, action: #selector(controlMenuItemClicked), keyEquivalent: key)
+      controlItem.isAlternate = true
+      controlItem.keyEquivalentModifierMask = [ .control ]
+      menu.addItem(controlItem)
     }
 
     for index in 3...4 {
@@ -108,7 +126,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       if optionModifierEnabled {
         title = "OPTION + [Custom Menu Item \(index)]"
       } else {
-        title = "ZZZ + [Custom Menu Item \(index)]"
+        title = "(None) + [Custom Menu Item \(index)]"
       }
 
       let key = "\(index)"
@@ -157,9 +175,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     quitItem.keyEquivalentModifierMask = [ .command ]
     menu.addItem(quitItem)
 
-    self.statusItem.menu = menu
+//    self.statusItem.menu = menu
   }
 
+  // Link: Possible solution from Daniel (Slack)
+  // https://iosdevelopers.slack.com/archives/C035R3WTC/p1622598265061200
+  private func attachCarbonEventHandler() {
+    let eventTypes: [EventTypeSpec] = [
+      EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: OSType(kEventRawKeyModifiersChanged)),
+    ]
+
+    // Link: Handling OSStatus (SO)
+    // https://stackoverflow.com/questions/2196869/how-do-you-convert-an-iphone-osstatus-code-to-something-useful
+    // Link: Carbon Event Handler status
+    // http://mirror.informatimago.com/next/developer.apple.com/documentation/Carbon/Reference/Carbon_Event_Manager_Ref/CarbonEventsRef/ResultCodes.html#//apple_ref/doc/uid/TP30000135/RCM0141
+
+    // Install Carbon event handler to hear about modifier keys and monitor menu tracking
+    let appDelegateRaw = Unmanaged.passUnretained(self).toOpaque()
+    let status = InstallEventHandler(GetApplicationEventTarget(), AppDelegate.menuEventHandler, eventTypes.count, eventTypes, appDelegateRaw, &eventHandlerRef)
+    if status == noErr {
+      debugPrint("InstallEventHandler == noErr")
+    } else {
+      debugPrint("InstallEventHandler != noErr")
+    }
+  }
+
+  // Legacy from Daniel // Simplified above
   // Link: Possible solution from Daniel (Slack)
   // https://iosdevelopers.slack.com/archives/C035R3WTC/p1622598265061200
   private func performWithCarbonEventHandling(_ block: () -> ()) {
@@ -185,27 +226,102 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
   }
 
-//  (_ inHandlerCallRef: EventHandlerCallRef?, _ eventRef: EventRef?, userData: UnsafeMutableRawPointer?) -> OSStatus in {
-  static private let menuTrackingEventHandler: EventHandlerProcPtr = {
+  // Updated version that just handles keyboard / modifier keys
+  static private let menuEventHandler: EventHandlerProcPtr = {
     (callRef: EventHandlerCallRef?, eventRef: EventRef?, rawPointer: UnsafeMutableRawPointer?) in
-    let date = Date()
-
-    let appDelegate: AppDelegate
+    let date = Date() // KMKMKM
 
     guard let appDelegateRaw = rawPointer?.assumingMemoryBound(to: AppDelegate.self) else {
       // YSNBH
-      return -1
+      // FIXME: Return Value
+      return -50 // paramErr = -50, /*error in user parameter list*/
     }
 
-    appDelegate = Unmanaged<AppDelegate>.fromOpaque(appDelegateRaw).takeUnretainedValue()
+    let appDelegate = Unmanaged<AppDelegate>.fromOpaque(appDelegateRaw).takeUnretainedValue()
     debugPrint("appDelegate : \(appDelegate)")
+
+    guard let menu = appDelegate.statusItem.menu else {
+      // YSNBH
+      // FIXME: Return Value
+      return -50 // paramErr = -50, /*error in user parameter list*/
+    }
 
     let eventClass = GetEventClass(eventRef)
     let eventKind = GetEventKind(eventRef)
-    //    EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: OSType(kEventRawKeyModifiersChanged)),
-    //    EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuTargetItem)),
-    //    EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuBeginTracking)),
-    //    EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuEndTracking)),
+    //    kEventClassKeyboard : kEventRawKeyModifiersChanged
+    //    kEventClassMenu : kEventMenuTargetItem
+    //    kEventClassMenu : kEventMenuBeginTracking
+    //    kEventClassMenu : kEventMenuEndTracking
+    if eventClass == OSType(kEventClassKeyboard) && eventKind == OSType(kEventRawKeyModifiersChanged) {
+      var regenerateMenu = false
+      var modifierKeys: UInt32 = 0
+      let modifer = GetEventParameter(eventRef,
+                                      EventParamName(kEventParamKeyModifiers),
+                                      typeUInt32,
+                                      nil,
+                                      MemoryLayout.size(ofValue: modifierKeys),
+                                      nil,
+                                      &modifierKeys)
+      var modifierKeysString = ""
+      if modifierKeys & OSType(cmdKey) != 0 {
+        modifierKeysString += " Command"
+      }
+      if modifierKeys & OSType(controlKey) != 0 {
+        modifierKeysString += " Control"
+      }
+      if modifierKeys & OSType(optionKey) != 0 {
+        modifierKeysString += " Option"
+        appDelegate.modifierLock.lock()
+        if !appDelegate.optionModifierEnabled {
+          appDelegate.optionModifierEnabled = true
+          regenerateMenu = true
+        }
+        appDelegate.modifierLock.unlock()
+      } else {
+        appDelegate.modifierLock.lock()
+        if appDelegate.optionModifierEnabled {
+          appDelegate.optionModifierEnabled = false
+          regenerateMenu = true
+        }
+        appDelegate.modifierLock.unlock()
+      }
+      debugPrint("menuTrackingEventHandler - \(date) - kEventClassKeyboard - kEventRawKeyModifiersChanged - \(modifierKeysString)")
+      if regenerateMenu {
+        debugPrint("TODO: REGENERATE MENU")
+        appDelegate.generateMenu()
+      }
+    }
+
+    return 0
+  }
+
+
+//  (_ inHandlerCallRef: EventHandlerCallRef?, _ eventRef: EventRef?, userData: UnsafeMutableRawPointer?) -> OSStatus in {
+  static private let menuTrackingEventHandler: EventHandlerProcPtr = {
+    (callRef: EventHandlerCallRef?, eventRef: EventRef?, rawPointer: UnsafeMutableRawPointer?) in
+    let date = Date() // KMKMKM
+
+    guard let appDelegateRaw = rawPointer?.assumingMemoryBound(to: AppDelegate.self) else {
+      // YSNBH
+      // FIXME: Return Value
+      return -50 // paramErr = -50, /*error in user parameter list*/
+    }
+
+    let appDelegate = Unmanaged<AppDelegate>.fromOpaque(appDelegateRaw).takeUnretainedValue()
+    debugPrint("appDelegate : \(appDelegate)")
+
+    guard let menu = appDelegate.statusItem.menu else {
+      // YSNBH
+      // FIXME: Return Value
+      return -50 // paramErr = -50, /*error in user parameter list*/
+    }
+
+    let eventClass = GetEventClass(eventRef)
+    let eventKind = GetEventKind(eventRef)
+    //    kEventClassKeyboard : kEventRawKeyModifiersChanged
+    //    kEventClassMenu : kEventMenuTargetItem
+    //    kEventClassMenu : kEventMenuBeginTracking
+    //    kEventClassMenu : kEventMenuEndTracking
     if eventClass == OSType(kEventClassKeyboard) && eventKind == OSType(kEventRawKeyModifiersChanged) {
       var regenerateMenu = false
       var modifierKeys: UInt32 = 0
