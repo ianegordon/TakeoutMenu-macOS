@@ -32,8 +32,8 @@ class CustomMenuView: NSView {
   @IBOutlet weak var cursiveLabel: NSTextField!
 
   private var effectView: NSVisualEffectView
-  private let standardColor = NSColor(red: 0xa6/255, green: 0xec/255, blue: 0xec/255, alpha: 1)
-  private let alternativeColor = NSColor(red: 0xec/255, green: 0xec/255, blue: 0xa6/255, alpha: 1)
+  private let standardColor = NSColor(red: 0xa6/0xff, green: 0xec/0xff, blue: 0xec/0xff, alpha: 1)
+  private let alternativeColor = NSColor(red: 0xec/0xff, green: 0xec/0xff, blue: 0xa6/0xff, alpha: 1)
 
   required init?(coder decoder: NSCoder) {
     effectView = NSVisualEffectView()
