@@ -30,6 +30,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   
   var eventHandlerRef: EventHandlerRef?
   var optionModifierEnabled: Bool = false
+  var customMenuItems = [NSMenuItem]()
   
   let statusItem: NSStatusItem = NSStatusBar.system.statusItem(withLength:NSStatusItem.variableLength)
   
@@ -142,6 +143,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
       }
       menu.addItem(customItem)
+      customMenuItems.append(customItem)
     }
     
     menu.addItem(NSMenuItem.separator())
@@ -248,10 +250,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       if !commandOnly {
         debugPrint("menuTrackingEventHandler - \(date) - kEventClassKeyboard - kEventRawKeyModifiersChanged - \(modifierKeysString)")
         if regenerateMenu {
+          let title: String
           if appDelegate.optionModifierEnabled {
-            debugPrint("TODO: REGENERATE MENU - OPTION")
+            title = "OPTION + [Custom Menu Item]"
           } else {
-            debugPrint("TODO: REGENERATE MENU - (No Option)")
+            title = "ZZZ + [Custom Menu Item]"
+          }
+
+          for menuItem in appDelegate.customMenuItems {
+            if let customView = menuItem.view as? CustomMenuView {
+              customView.cursiveLabel.stringValue = title
+              customView.setNeedsDisplay(menuItem.view!.bounds)
+            }
           }
 //          appDelegate.generateMenu()
         }
