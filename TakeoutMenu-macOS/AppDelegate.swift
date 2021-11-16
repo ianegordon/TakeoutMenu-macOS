@@ -84,7 +84,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   // MARK: Internal
   //TODO: Should this menu get generated once and then items added, removed, and adjusted?
   func generateMenu() {
-
+    
     // Deprecated
     // Useless after macOS 10.6
     // Disable partial changes
@@ -142,27 +142,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
       }
       menu.addItem(customItem)
-      
-      // The following item does NOT work as expected
-      // Rather than providing an alternative item if the OPTION modifer is pressed, this item is just added inline
-      // to the standard menu.
-      //      let optionCustomItem = NSMenuItem(title: "<Unused>", action: #selector(optionMenuItemClicked), keyEquivalent: key)
-      //      optionCustomItem.isAlternate = true
-      //      optionCustomItem.keyEquivalentModifierMask = [ .option ]
-      //      if Bundle.main.loadNibNamed("CustomMenuView", owner: self, topLevelObjects: &topLevelObjects) {
-      //        let xibView = topLevelObjects!.first(where: { $0 is CustomMenuView }) as? CustomMenuView
-      //        if let itemView = xibView {
-      //          itemView.cursiveLabel.stringValue = "OPTION + " + title
-      //
-      //          //!!! If we do not explicitly set the size, the menu will use the starting size from the XIB.
-      //          itemView.frame = CGRect(origin: .zero, size: itemView.fittingSize)
-      //          itemView.enableAlternateBackgroundColor = true
-      //
-      //          optionCustomItem.view = itemView
-      //        }
-      //      }
-      //      menu.addItem(optionCustomItem)
-      
     }
     
     menu.addItem(NSMenuItem.separator())
@@ -181,9 +160,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   private func performWithCarbonEventHandling(_ block: () -> ()) {
     let eventTypes: [EventTypeSpec] = [
       EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: OSType(kEventRawKeyModifiersChanged)),
-      EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuTargetItem)),
+      EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuOpening)),
+      // Use Populate instead of Opening according to the Carbon Reference
+      EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuPopulate)),
+      // Switch between keyboard and mouse tracking
+      EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuChangeTrackingMode)),
       EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuBeginTracking)),
       EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuEndTracking)),
+      EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuTargetItem)),
+      EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuDrawItem)),
     ]
     
     // Link: Handling OSStatus (SO)
@@ -219,15 +204,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       return -1
     }
     appDelegate = Unmanaged<AppDelegate>.fromOpaque(appDelegateRaw).takeUnretainedValue()
-//FIXME    debugPrint("appDelegate : menuTrackingEventHandler : \(appDelegate)")
+    //FIXME    debugPrint("appDelegate : menuTrackingEventHandler : \(appDelegate)")
     
     // Extract Event types and parameters
     let eventClass = GetEventClass(eventRef)
     let eventKind = GetEventKind(eventRef)
-    //    EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: OSType(kEventRawKeyModifiersChanged)),
-    //    EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuTargetItem)),
-    //    EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuBeginTracking)),
-    //    EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuEndTracking)),
     //TODO: Be more specific about whether a key has been engaged or released
     if eventClass == OSType(kEventClassKeyboard) && eventKind == OSType(kEventRawKeyModifiersChanged) {
       var regenerateMenu = false
@@ -272,7 +253,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
           } else {
             debugPrint("TODO: REGENERATE MENU - (No Option)")
           }
-          appDelegate.generateMenu()
+//          appDelegate.generateMenu()
         }
       }
       
@@ -284,6 +265,27 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // TODO: Add Modifier Watcher
       } else if eventKind == OSType(kEventMenuEndTracking) {
         debugPrint("menuTrackingEventHandler - \(date) - kEventClassMenu - kEventMenuEndTracking")
+        // TODO: Remove Modifier Watcher
+      } else if eventKind == OSType(kEventMenuDrawItem) {
+        //        *    --> kEventParamMenuItemIndex (in, typeMenuItemIndex)
+        var drawIndex: MenuItemIndex = 0
+        let result = GetEventParameter(eventRef,
+                                        EventParamName(kEventParamMenuItemIndex),
+                                        EventParamType(typeMenuItemIndex),
+                                        nil,
+                                        MemoryLayout.size(ofValue: drawIndex),
+                                        nil,
+                                        &drawIndex)
+        
+        debugPrint("menuTrackingEventHandler - \(date) - kEventClassMenu - kEventMenuDrawItem")
+      } else if eventKind == OSType(kEventMenuPopulate) {
+        debugPrint("menuTrackingEventHandler - \(date) - kEventClassMenu - kEventMenuPopulate")
+        // TODO: Remove Modifier Watcher
+      } else if eventKind == OSType(kEventMenuOpening) {
+        debugPrint("menuTrackingEventHandler - \(date) - kEventClassMenu - kEventMenuOpening")
+        // TODO: Remove Modifier Watcher
+      } else if eventKind == OSType(kEventMenuChangeTrackingMode) {
+        debugPrint("menuTrackingEventHandler - \(date) - kEventClassMenu - kEventMenuChangeTrackingMode")
         // TODO: Remove Modifier Watcher
       } else {
         debugPrint("menuTrackingEventHandler - \(date) - kEventClassMenu - kUKNOWN")

@@ -54,6 +54,8 @@ class CustomMenuView: NSView {
   override func draw(_ dirtyRect: NSRect) {
     super.draw(dirtyRect)
 
+    debugPrint("Draw Custom")
+    
     let foregroundColor: NSColor
 
     if self.enclosingMenuItem != nil,
