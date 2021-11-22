@@ -50,7 +50,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     self.generateMenu()
     
     // Attach Carbon Event Listener / Handler
-    performWithCarbonEventHandling( {
+    attachCarbonEventHandling( {
       debugPrint("Block")
     }
     )
@@ -98,6 +98,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     } else {
       debugPrint("no option GENERATE MENU no option GENERATE MENU no option GENERATE MENU")
     }
+    
+    customMenuItems.removeAll()
     
     let menu = NSMenu(title: "<Unused>")
     menu.autoenablesItems = false
@@ -153,15 +155,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     quitItem.keyEquivalentModifierMask = [ .command ]
     menu.addItem(quitItem)
     
-    self.statusItem.menu = nil
     self.statusItem.menu = menu
   }
   
   // Link: Possible solution from Daniel (Slack)
   // https://iosdevelopers.slack.com/archives/C035R3WTC/p1622598265061200
-  private func performWithCarbonEventHandling(_ block: () -> ()) {
+  private func attachCarbonEventHandling(_ block: () -> ()) {
     let eventTypes: [EventTypeSpec] = [
+      // KEYBOARD
       EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: OSType(kEventRawKeyModifiersChanged)),
+      EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: OSType(kEventHotKeyPressed)),
+      EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: OSType(kEventHotKeyReleased)),
+      // MENU
       EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuOpening)),
       // Use Populate instead of Opening according to the Carbon Reference
       EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuPopulate)),
@@ -212,58 +217,66 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let eventClass = GetEventClass(eventRef)
     let eventKind = GetEventKind(eventRef)
     //TODO: Be more specific about whether a key has been engaged or released
-    if eventClass == OSType(kEventClassKeyboard) && eventKind == OSType(kEventRawKeyModifiersChanged) {
-      var regenerateMenu = false
-      var modifierKeys: UInt32 = 0
-      let modifer = GetEventParameter(eventRef,
-                                      EventParamName(kEventParamKeyModifiers),
-                                      typeUInt32,
-                                      nil,
-                                      MemoryLayout.size(ofValue: modifierKeys),
-                                      nil,
-                                      &modifierKeys)
-      var commandOnly = false // Is command the only key engaged right now, if so skip
-      var modifierKeysString = ""
-      if modifierKeys & OSType(cmdKey) != 0 {
-        modifierKeysString += " Command"
-        commandOnly = true
-      }
-      if modifierKeys & OSType(controlKey) != 0 {
-        modifierKeysString += " Control"
-        commandOnly = false
-      }
-      
-      if modifierKeys & OSType(optionKey) != 0 {
-        modifierKeysString += " Option"
-        commandOnly = false
-        if !appDelegate.optionModifierEnabled {
-          appDelegate.optionModifierEnabled = true
-          regenerateMenu = true
+    if eventClass == OSType(kEventClassKeyboard) {
+      if eventKind == OSType(kEventHotKeyPressed) {
+        //!!! NOT INVOKED
+        debugPrint("kEventHotKeyPressed")
+      } else if eventKind == OSType(kEventHotKeyPressed) {
+        //!!! NOT INVOKED
+        debugPrint("kEventHotKeyPressed")
+      } else if eventKind == OSType(kEventRawKeyModifiersChanged) {
+        var regenerateMenu = false
+        var modifierKeys: UInt32 = 0
+        let modifer = GetEventParameter(eventRef,
+                                        EventParamName(kEventParamKeyModifiers),
+                                        typeUInt32,
+                                        nil,
+                                        MemoryLayout.size(ofValue: modifierKeys),
+                                        nil,
+                                        &modifierKeys)
+        var commandOnly = false // Is command the only key engaged right now, if so skip
+        var modifierKeysString = ""
+        if modifierKeys & OSType(cmdKey) != 0 {
+          modifierKeysString += " Command"
+          commandOnly = true
         }
-      } else {
-        if appDelegate.optionModifierEnabled {
-          appDelegate.optionModifierEnabled = false
-          regenerateMenu = true
+        if modifierKeys & OSType(controlKey) != 0 {
+          modifierKeysString += " Control"
+          commandOnly = false
         }
-      }
-      
-      if !commandOnly {
-        debugPrint("menuTrackingEventHandler - \(date) - kEventClassKeyboard - kEventRawKeyModifiersChanged - \(modifierKeysString)")
-        if regenerateMenu {
-          let title: String
+        
+        if modifierKeys & OSType(optionKey) != 0 {
+          modifierKeysString += " Option"
+          commandOnly = false
+          if !appDelegate.optionModifierEnabled {
+            appDelegate.optionModifierEnabled = true
+            regenerateMenu = true
+          }
+        } else {
           if appDelegate.optionModifierEnabled {
-            title = "OPTION + [Custom Menu Item]"
-          } else {
-            title = "ZZZ + [Custom Menu Item]"
+            appDelegate.optionModifierEnabled = false
+            regenerateMenu = true
           }
-
-          for menuItem in appDelegate.customMenuItems {
-            if let customView = menuItem.view as? CustomMenuView {
-              customView.cursiveLabel.stringValue = title
-              customView.setNeedsDisplay(menuItem.view!.bounds)
+        }
+        
+        if !commandOnly {
+          debugPrint("menuTrackingEventHandler - \(date) - kEventClassKeyboard - kEventRawKeyModifiersChanged - \(modifierKeysString)")
+          if regenerateMenu {
+            let title: String
+            if appDelegate.optionModifierEnabled {
+              title = "OPTION + [Custom Menu Item]"
+            } else {
+              title = "ZZZ + [Custom Menu Item]"
             }
+            
+            for menuItem in appDelegate.customMenuItems {
+              if let customView = menuItem.view as? CustomMenuView {
+                customView.cursiveLabel.stringValue = title
+                //              customView.setNeedsDisplay(menuItem.view!.bounds)
+              }
+            }
+            //          appDelegate.generateMenu()
           }
-//          appDelegate.generateMenu()
         }
       }
       
@@ -280,12 +293,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         //        *    --> kEventParamMenuItemIndex (in, typeMenuItemIndex)
         var drawIndex: MenuItemIndex = 0
         let result = GetEventParameter(eventRef,
-                                        EventParamName(kEventParamMenuItemIndex),
-                                        EventParamType(typeMenuItemIndex),
-                                        nil,
-                                        MemoryLayout.size(ofValue: drawIndex),
-                                        nil,
-                                        &drawIndex)
+                                       EventParamName(kEventParamMenuItemIndex),
+                                       EventParamType(typeMenuItemIndex),
+                                       nil,
+                                       MemoryLayout.size(ofValue: drawIndex),
+                                       nil,
+                                       &drawIndex)
         
         debugPrint("menuTrackingEventHandler - \(date) - kEventClassMenu - kEventMenuDrawItem")
       } else if eventKind == OSType(kEventMenuPopulate) {
@@ -303,7 +316,47 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     } else {
       debugPrint("menuTrackingEventHandler - \(date) - \(eventClass) - \(eventKind)")
     }
+    
+    CallNextEventHandler(callRef, eventRef)
+    
     return 0
+    
+  }
+  
+  //TODO: Some of these events are possibly only attachable to a menu?
+  private func attachMenuCarbonEventHandling() {
+    //    self.statusItem.menu
+    let eventTypes: [EventTypeSpec] = [
+      EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: OSType(kEventRawKeyModifiersChanged)),
+      EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuOpening)),
+      // Use Populate instead of Opening according to the Carbon Reference
+      EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuPopulate)),
+      // Switch between keyboard and mouse tracking
+      EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuChangeTrackingMode)),
+      EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuBeginTracking)),
+      EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuEndTracking)),
+      EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuTargetItem)),
+      EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuDrawItem)),
+    ]
+    
+    // Link: Handling OSStatus (SO)
+    // https://stackoverflow.com/questions/2196869/how-do-you-convert-an-iphone-osstatus-code-to-something-useful
+    // Link: Carbon Event Handler status
+    // http://mirror.informatimago.com/next/developer.apple.com/documentation/Carbon/Reference/Carbon_Event_Manager_Ref/CarbonEventsRef/ResultCodes.html#//apple_ref/doc/uid/TP30000135/RCM0141
+    
+    // Install Carbon event handler to hear about modifier keys and monitor menu tracking
+    let appDelegateRaw = Unmanaged.passUnretained(self).toOpaque()
+    let status = InstallEventHandler(GetApplicationEventTarget(),
+                                     AppDelegate.menuTrackingEventHandler,
+                                     eventTypes.count,
+                                     eventTypes,
+                                     appDelegateRaw,
+                                     &eventHandlerRef)
+    if status == noErr {
+      debugPrint("InstallEventHandler success")
+    } else {
+      debugPrint("ERROR: InstallEventHandler : \(status)")
+    }
   }
 }
 
