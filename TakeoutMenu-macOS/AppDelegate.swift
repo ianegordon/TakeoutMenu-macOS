@@ -22,6 +22,13 @@
  SOFTWARE.
  */
 
+//TODO: Support Modifier Keys: Command, Control, Shift, Option (alias Alternate)
+// From: https://cool8jay.github.io/shortcut-nemenuitem-nsbutton/
+// In Apple’s Human Interface Guidelines, this menu item is called Dynamic Menu Items, and invisible by default.
+
+// LINK: Tracking modifier keys
+// https://www.generacodice.com/en/articolo/4433510/hide-show-menu-item-in-application-s-main-menu-by-pressing-option-key
+
 import Cocoa
 import Carbon
 
@@ -30,6 +37,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   
   var eventHandlerRef: EventHandlerRef?
   var optionModifierEnabled: Bool = false
+  
+  var menu = NSMenu(title: "<unused>")
   var customMenuItems = [NSMenuItem]()
   
   let statusItem: NSStatusItem = NSStatusBar.system.statusItem(withLength:NSStatusItem.variableLength)
@@ -46,8 +55,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     self.statusItem.button?.target = self
     self.statusItem.button?.action = #selector(statusBarClicked)
     
-    // Generate Menu
-    self.generateMenu()
+    // Setup Menu
+    menu.autoenablesItems = false
+    self.statusItem.menu = menu
+    
+    //    self.generateMenu()
     
     // Attach Carbon Event Listener / Handler
     attachCarbonEventHandling( {
@@ -93,16 +105,31 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // https://stackoverflow.com/a/3298494
     // self.statusItem.menu?.menuChangedMessagesEnabled = false
     
+    // https://www.generacodice.com/en/articolo/4433510/hide-show-menu-item-in-application-s-main-menu-by-pressing-option-key
+    // Get global modifier key flag, [[NSApp currentEvent] modifierFlags] doesn't update while menus are down
+    //    CGEventRef event = CGEventCreate (NULL);
+    //    CGEventFlags flags = CGEventGetFlags (event);
+    //    BOOL optionKeyIsPressed = (flags & kCGEventFlagMaskAlternate) == kCGEventFlagMaskAlternate;
+    //    CFRelease(event);
+    
+    if let event = NSApplication.shared.currentEvent {
+      if event.modifierFlags.contains(.option) {
+        optionModifierEnabled = true
+      }
+    }
+    
     if optionModifierEnabled {
       debugPrint("OPTION GENERATE MENU OPTION GENERATE MENU OPTION GENERATE MENU")
     } else {
       debugPrint("no option GENERATE MENU no option GENERATE MENU no option GENERATE MENU")
     }
     
+    menu.removeAllItems()
     customMenuItems.removeAll()
     
-    let menu = NSMenu(title: "<Unused>")
-    menu.autoenablesItems = false
+    //KMKMKM
+    //    let menu = NSMenu(title: "<Unused>")
+    //    menu.autoenablesItems = false
     
     // Basic
     for index in 1...2 {
@@ -234,13 +261,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       } else if eventKind == OSType(kEventRawKeyModifiersChanged) {
         var regenerateMenu = false
         var modifierKeys: UInt32 = 0
-        let modifer = GetEventParameter(eventRef,
-                                        EventParamName(kEventParamKeyModifiers),
-                                        typeUInt32,
-                                        nil,
-                                        MemoryLayout.size(ofValue: modifierKeys),
-                                        nil,
-                                        &modifierKeys)
+        let status = GetEventParameter(eventRef,
+                                       EventParamName(kEventParamKeyModifiers),
+                                       EventParamType(typeUInt32),
+                                       nil,
+                                       MemoryLayout.size(ofValue: modifierKeys),
+                                       nil,
+                                       &modifierKeys)
         var commandOnly = false // Is command the only key engaged right now, if so skip
         var modifierKeysString = ""
         if modifierKeys & OSType(cmdKey) != 0 {
@@ -296,10 +323,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       } else if eventKind == OSType(kEventMenuEndTracking) {
         debugPrint("menuTrackingEventHandler - \(date) - kEventClassMenu - kEventMenuEndTracking")
         // TODO: Remove Modifier Watcher
+        appDelegate.optionModifierEnabled = false
       } else if eventKind == OSType(kEventMenuDrawItem) {
         //        *    --> kEventParamMenuItemIndex (in, typeMenuItemIndex)
         var drawIndex: MenuItemIndex = 0
-        let result = GetEventParameter(eventRef,
+        let status = GetEventParameter(eventRef,
                                        EventParamName(kEventParamMenuItemIndex),
                                        EventParamType(typeMenuItemIndex),
                                        nil,
@@ -309,7 +337,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         debugPrint("menuTrackingEventHandler - \(date) - kEventClassMenu - kEventMenuDrawItem")
       } else if eventKind == OSType(kEventMenuPopulate) {
-        debugPrint("menuTrackingEventHandler - \(date) - kEventClassMenu - kEventMenuPopulate")
+        var menuContext: UInt32 = 0
+        let contextStatus = GetEventParameter(eventRef,
+                                              EventParamName(kEventParamMenuContext),
+                                              EventParamType(typeUInt32),
+                                              nil,
+                                              MemoryLayout.size(ofValue: menuContext),
+                                              nil,
+                                              &menuContext)
+        var menuCommand: MenuCommand = 0
+        let commandStatus = GetEventParameter(eventRef,
+                                              EventParamName(kEventParamMenuCommand),
+                                              EventParamType(typeMenuCommand),
+                                              nil,
+                                              MemoryLayout.size(ofValue: menuCommand),
+                                              nil,
+                                              &menuCommand)
+        debugPrint("menuTrackingEventHandler - \(date) - kEventClassMenu - kEventMenuPopulate - \(menuContext) : \(menuCommand)")
+        // TODO: Regenerate Menu
+        appDelegate.generateMenu()
         // TODO: Remove Modifier Watcher
       } else if eventKind == OSType(kEventMenuOpening) {
         debugPrint("menuTrackingEventHandler - \(date) - kEventClassMenu - kEventMenuOpening")

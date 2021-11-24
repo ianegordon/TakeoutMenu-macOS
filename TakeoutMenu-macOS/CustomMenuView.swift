@@ -25,6 +25,12 @@
 // LINK: SO: How to get smooth corners with an NSVisualEffectsView
 // https://stackoverflow.com/questions/26518520/how-to-make-a-smooth-rounded-volume-like-os-x-window-with-nsvisualeffectview
 
+// LINK: SO: OS X NSMenuItem with custom NSView does not highlight swift
+// https://www.titanwolf.org/Network/q/0db795e9-d432-456d-9ddf-29d87f2fcacf/y
+
+// LINK: SO: Remove highlight from NSMenuItem after click?
+// https://stackoverflow.com/questions/6169930/remove-highlight-from-nsmenuitem-after-click
+
 import Cocoa
 
 class CustomMenuView: NSView {
@@ -36,13 +42,6 @@ class CustomMenuView: NSView {
   
   private let highlightEffectView: NSVisualEffectView
   
-  //TODO Identify proper system colors for standard and highlighted background
-//  private let standardColor = NSColor(red: 0xa6/0xff, green: 0xec/0xff, blue: 0xec/0xff, alpha: 1)
-//  private let alternativeColor = NSColor(red: 0xec/0xff, green: 0xec/0xff, blue: 0xa6/0xff, alpha: 1)
-//  private let standardColor = NSColor(red: 0xa6/0xff, green: 0x00/0xff, blue: 0xec/0xff, alpha: 1)
-  private let standardColor = NSColor.textBackgroundColor
-  private let alternativeColor = NSColor(red: 0xec/0xff, green: 0xec/0xff, blue: 0x00/0xff, alpha: 1)
-
   required init?(coder decoder: NSCoder) {
     highlightEffectView = NSVisualEffectView()
     highlightEffectView.state = .active
@@ -51,11 +50,6 @@ class CustomMenuView: NSView {
     highlightEffectView.blendingMode = .behindWindow
     highlightEffectView.autoresizingMask = [.width, .height]
     //TODO: Identify way to inset round rect to bound the effect view
-//    effectView.wantsLayer = true
-//    effectView.layer?.frame = effectView.bounds
-//    effectView.layer?.cornerRadius = 8
-//    effectView.layer?.masksToBounds = true
-//    effectView.layer?.maskedCorners = true
     
     super.init(coder: decoder)
     
@@ -65,48 +59,12 @@ class CustomMenuView: NSView {
     self.autoresizingMask = [.width, .height]
   }
   
-  override func draw(_ dirtyRect: NSRect) {
-    super.draw(dirtyRect)
-    
-    let isHighlighted: Bool
-    let isAlternativeBackground: Bool  // KMKMKM Used for logging only
-    
-    let foregroundColor: NSColor
-    let backgroundColor: NSColor
-    
-    if self.enclosingMenuItem != nil,
-       self.enclosingMenuItem!.isHighlighted {
-      isHighlighted = true
-      
-      foregroundColor = NSColor.selectedMenuItemTextColor
-      highlightEffectView.isHidden = false
-    } else {
-      isHighlighted = false
-      
-      foregroundColor = NSColor.labelColor
-      highlightEffectView.isHidden = true
+  var highlighted : Bool = false {
+    didSet {
+      if oldValue != highlighted {
+        needsDisplay = true
+      }
     }
-    
-    self.cursiveLabel.textColor = foregroundColor
-    
-    let backgroundRect = self.bounds
-    let fillRect = self.bounds.insetBy(dx: 4, dy: 1)
-    let path = NSBezierPath(roundedRect: fillRect, xRadius: 4, yRadius: 4)
-//    backgroundColor.setFill()
-//    path.fill()
-
-    if self.enableAlternateBackgroundColor {
-      isAlternativeBackground = true
-    } else {
-      isAlternativeBackground = false
-    }
-    
-    if isHighlighted {
-      debugPrint("Draw Custom HL - BG \(isAlternativeBackground)")
-    } else {
-      debugPrint("Draw Custom noHL - BG \(isAlternativeBackground)")
-    }
-    
   }
   
   /// Custom implementation of mouseUp that will invoke the target/action from the enclosing menuitem
@@ -123,7 +81,44 @@ class CustomMenuView: NSView {
     self.setNeedsDisplay(self.bounds)
   }
   
+//  override func mouseEntered(with theEvent: NSEvent) { highlighted = true }
+//  override func mouseExited(with theEvent: NSEvent) { highlighted = false }
+  
   override func keyUp(with event: NSEvent) {
     debugPrint("Custom MenuItemView keyUp")
   }
+
+  override func draw(_ dirtyRect: NSRect) {
+    super.draw(dirtyRect)
+    
+    let isAlternativeBackground: Bool  // KMKMKM Used for logging only
+    
+    let foregroundColor: NSColor
+    
+    if self.enclosingMenuItem != nil,
+       self.enclosingMenuItem!.isHighlighted {
+      foregroundColor = NSColor.selectedMenuItemTextColor
+      highlightEffectView.isHidden = false
+    } else {
+      foregroundColor = NSColor.labelColor
+      highlightEffectView.isHidden = true
+    }
+    self.cursiveLabel.textColor = foregroundColor
+    
+    let isHighlighted = !highlightEffectView.isHidden  // KMKMKM Used for logging only
+    
+    if self.enableAlternateBackgroundColor {
+      isAlternativeBackground = true
+    } else {
+      isAlternativeBackground = false
+    }
+    
+    if isHighlighted {
+      debugPrint("Draw Custom HL - BG \(isAlternativeBackground)")
+    } else {
+      debugPrint("Draw Custom noHL - BG \(isAlternativeBackground)")
+    }
+    
+  }
+  
 }
