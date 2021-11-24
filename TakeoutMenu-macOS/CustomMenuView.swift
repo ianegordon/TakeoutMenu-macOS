@@ -22,6 +22,9 @@
  SOFTWARE.
  */
 
+// LINK: SO: How to get smooth corners with an NSVisualEffectsView
+// https://stackoverflow.com/questions/26518520/how-to-make-a-smooth-rounded-volume-like-os-x-window-with-nsvisualeffectview
+
 import Cocoa
 
 class CustomMenuView: NSView {
@@ -31,22 +34,33 @@ class CustomMenuView: NSView {
   
   @IBOutlet weak var cursiveLabel: NSTextField!
   
-  private var effectView: NSVisualEffectView
-  private let standardColor = NSColor(red: 0xa6/0xff, green: 0xec/0xff, blue: 0xec/0xff, alpha: 1)
-  private let alternativeColor = NSColor(red: 0xec/0xff, green: 0xec/0xff, blue: 0xa6/0xff, alpha: 1)
+  private let highlightEffectView: NSVisualEffectView
   
+  //TODO Identify proper system colors for standard and highlighted background
+//  private let standardColor = NSColor(red: 0xa6/0xff, green: 0xec/0xff, blue: 0xec/0xff, alpha: 1)
+//  private let alternativeColor = NSColor(red: 0xec/0xff, green: 0xec/0xff, blue: 0xa6/0xff, alpha: 1)
+//  private let standardColor = NSColor(red: 0xa6/0xff, green: 0x00/0xff, blue: 0xec/0xff, alpha: 1)
+  private let standardColor = NSColor.textBackgroundColor
+  private let alternativeColor = NSColor(red: 0xec/0xff, green: 0xec/0xff, blue: 0x00/0xff, alpha: 1)
+
   required init?(coder decoder: NSCoder) {
-    effectView = NSVisualEffectView()
-    effectView.state = .active
-    effectView.material = .selection
-    effectView.isEmphasized = true
-    effectView.blendingMode = .behindWindow
-    effectView.autoresizingMask = [.width, .height]
+    highlightEffectView = NSVisualEffectView()
+    highlightEffectView.state = .active
+    highlightEffectView.material = .selection
+    highlightEffectView.isEmphasized = true
+    highlightEffectView.blendingMode = .behindWindow
+    highlightEffectView.autoresizingMask = [.width, .height]
+    //TODO: Identify way to inset round rect to bound the effect view
+//    effectView.wantsLayer = true
+//    effectView.layer?.frame = effectView.bounds
+//    effectView.layer?.cornerRadius = 8
+//    effectView.layer?.masksToBounds = true
+//    effectView.layer?.maskedCorners = true
     
     super.init(coder: decoder)
     
-    self.addSubview(effectView, positioned: .below, relativeTo: nil)
-    effectView.frame = self.bounds
+    self.addSubview(highlightEffectView, positioned: .below, relativeTo: nil)
+    highlightEffectView.frame = self.bounds
     
     self.autoresizingMask = [.width, .height]
   }
@@ -55,34 +69,37 @@ class CustomMenuView: NSView {
     super.draw(dirtyRect)
     
     let isHighlighted: Bool
-    let isAlternativeBackground: Bool
+    let isAlternativeBackground: Bool  // KMKMKM Used for logging only
     
     let foregroundColor: NSColor
+    let backgroundColor: NSColor
     
     if self.enclosingMenuItem != nil,
        self.enclosingMenuItem!.isHighlighted {
       isHighlighted = true
       
       foregroundColor = NSColor.selectedMenuItemTextColor
-      effectView.isHidden = false
+      highlightEffectView.isHidden = false
     } else {
       isHighlighted = false
       
       foregroundColor = NSColor.labelColor
-      effectView.isHidden = true
+      highlightEffectView.isHidden = true
     }
     
     self.cursiveLabel.textColor = foregroundColor
     
+    let backgroundRect = self.bounds
+    let fillRect = self.bounds.insetBy(dx: 4, dy: 1)
+    let path = NSBezierPath(roundedRect: fillRect, xRadius: 4, yRadius: 4)
+//    backgroundColor.setFill()
+//    path.fill()
+
     if self.enableAlternateBackgroundColor {
       isAlternativeBackground = true
-      alternativeColor.setFill()
     } else {
       isAlternativeBackground = false
-      standardColor.setFill()
     }
-    
-    dirtyRect.fill()
     
     if isHighlighted {
       debugPrint("Draw Custom HL - BG \(isAlternativeBackground)")

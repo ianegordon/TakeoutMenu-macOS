@@ -141,7 +141,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
           //!!! If we do not explicitly set the size, the menu will use the starting size from the XIB.
           itemView.frame = CGRect(origin: .zero, size: itemView.fittingSize)
           
+          let previousView = customItem.view
+          
           customItem.view = itemView
+          
+          let afterView = customItem.view
+          
+          var ii = 1; //KMKMKM
+          ii += 1
         }
       }
       menu.addItem(customItem)
