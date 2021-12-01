@@ -13,6 +13,7 @@
 		40C85E5E24C4C8340042106A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 40C85E5C24C4C8340042106A /* Main.storyboard */; };
 		40C85E6724C4D44A0042106A /* CustomMenuView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 40C85E6624C4D44A0042106A /* CustomMenuView.xib */; };
 		40C85E6924C4D4910042106A /* CustomMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C85E6824C4D4910042106A /* CustomMenuView.swift */; };
+		40E1158727571734000E8CA9 /* MenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E1158627571734000E8CA9 /* MenuDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +26,7 @@
 		40C85E6024C4C8340042106A /* TakeoutMenu_macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TakeoutMenu_macOS.entitlements; sourceTree = "<group>"; };
 		40C85E6624C4D44A0042106A /* CustomMenuView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomMenuView.xib; sourceTree = "<group>"; };
 		40C85E6824C4D4910042106A /* CustomMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMenuView.swift; sourceTree = "<group>"; };
+		40E1158627571734000E8CA9 /* MenuDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,9 +60,10 @@
 			isa = PBXGroup;
 			children = (
 				40C85E5624C4C8320042106A /* AppDelegate.swift */,
-				40C85E5824C4C8320042106A /* ViewController.swift */,
 				40C85E6824C4D4910042106A /* CustomMenuView.swift */,
 				40C85E6624C4D44A0042106A /* CustomMenuView.xib */,
+				40E1158627571734000E8CA9 /* MenuDelegate.swift */,
+				40C85E5824C4C8320042106A /* ViewController.swift */,
 				40C85E5A24C4C8340042106A /* Assets.xcassets */,
 				40C85E5C24C4C8340042106A /* Main.storyboard */,
 				40C85E5F24C4C8340042106A /* Info.plist */,
@@ -141,6 +144,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				40C85E5924C4C8320042106A /* ViewController.swift in Sources */,
+				40E1158727571734000E8CA9 /* MenuDelegate.swift in Sources */,
 				40C85E5724C4C8320042106A /* AppDelegate.swift in Sources */,
 				40C85E6924C4D4910042106A /* CustomMenuView.swift in Sources */,
 			);

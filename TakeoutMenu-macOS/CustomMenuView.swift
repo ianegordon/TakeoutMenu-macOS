@@ -31,6 +31,12 @@
 // LINK: SO: Remove highlight from NSMenuItem after click?
 // https://stackoverflow.com/questions/6169930/remove-highlight-from-nsmenuitem-after-click
 
+// LINK: SO: NSMenuItem with custom view doesn't receive mouse events
+// https://stackoverflow.com/questions/44527792/nsmenuitem-with-custom-view-doesnt-receive-mouse-events
+
+// LINK: Event Monitors
+// https://isapozhnik.com/articles/status-item/
+
 import Cocoa
 
 class CustomMenuView: NSView {
@@ -84,14 +90,16 @@ class CustomMenuView: NSView {
 //  override func mouseEntered(with theEvent: NSEvent) { highlighted = true }
 //  override func mouseExited(with theEvent: NSEvent) { highlighted = false }
   
+  // The following key methods are NOT expected to be invoked
   override func keyUp(with event: NSEvent) {
     debugPrint("Custom MenuItemView keyUp")
   }
-
+  override func keyDown(with event: NSEvent) {
+    debugPrint("Custom MenuItemView keyDown")
+  }
+  
   override func draw(_ dirtyRect: NSRect) {
     super.draw(dirtyRect)
-    
-    let isAlternativeBackground: Bool  // KMKMKM Used for logging only
     
     let foregroundColor: NSColor
     
@@ -107,17 +115,11 @@ class CustomMenuView: NSView {
     
     let isHighlighted = !highlightEffectView.isHidden  // KMKMKM Used for logging only
     
-    if self.enableAlternateBackgroundColor {
-      isAlternativeBackground = true
-    } else {
-      isAlternativeBackground = false
-    }
-    
-    if isHighlighted {
-      debugPrint("Draw Custom HL - BG \(isAlternativeBackground)")
-    } else {
-      debugPrint("Draw Custom noHL - BG \(isAlternativeBackground)")
-    }
+//    if isHighlighted {
+//      debugPrint("Draw Custom HL")
+//    } else {
+//      debugPrint("Draw Custom noHL")
+//    }
     
   }
   
