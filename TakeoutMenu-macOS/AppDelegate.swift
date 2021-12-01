@@ -75,19 +75,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   
   //MARK: Actions
   @objc func statusBarClicked() {
-    print("statusBarClicked")
+    print("APP : statusBarClicked")
   }
   
   @objc func menuItemClicked() {
-    print("menuItemClicked")
+    print("APP : menuItemClicked")
   }
   
   @objc func optionMenuItemClicked() {
-    print("optionMenuItemClicked")
+    print("APP : optionMenuItemClicked")
   }
   
   @objc func quitClicked() {
-    print("quitClicked")
+    print("APP : quitClicked")
     
     RemoveEventHandler(eventHandlerRef)
     
@@ -161,7 +161,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       let key = "\(index)"
       
       //TODO: Identify why keyEquivalent isn't working
-      let customItem = NSMenuItem(title: "<Unused>", action: #selector(menuItemClicked), keyEquivalent: key)
+      let customItem = NSMenuItem(title: title, action: #selector(menuItemClicked), keyEquivalent: key)
       if Bundle.main.loadNibNamed("CustomMenuView", owner: self, topLevelObjects: &topLevelObjects) {
         let xibView = topLevelObjects!.first(where: { $0 is CustomMenuView }) as? CustomMenuView
         if let itemView = xibView {
@@ -176,6 +176,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       //???: Do I need customItem.target = self
       menu.addItem(customItem)
       customMenuItems.append(customItem)
+
+      // Fake Entries
+      let standardItem = NSMenuItem(title: title, action: #selector(menuItemClicked), keyEquivalent: key)
+      standardItem.isHidden = true
+      standardItem.allowsKeyEquivalentWhenHidden = true
+      menu.addItem(standardItem)
+
+      let optionTitle = "OPTION + " + title
+      let optionItem = NSMenuItem(title: optionTitle, action: #selector(optionMenuItemClicked), keyEquivalent: key)
+      optionItem.isHidden = true
+      optionItem.isAlternate = true
+      optionItem.allowsKeyEquivalentWhenHidden = true
+      optionItem.keyEquivalentModifierMask = [ .option ]
+      menu.addItem(optionItem)
     }
     
     menu.addItem(NSMenuItem.separator())
@@ -184,8 +198,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let quitItem = NSMenuItem(title: "Quit", action: #selector(quitClicked), keyEquivalent: "q")
     quitItem.keyEquivalentModifierMask = [ .command ]
     menu.addItem(quitItem)
-    
-    self.statusItem.menu = menu
   }
   
   // Link: Possible solution from Daniel (Slack)
@@ -331,11 +343,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         debugPrint("menuTrackingEventHandler - \(date) - kEventClassMenu - kEventMenuTargetItem")
       } else if eventKind == OSType(kEventMenuBeginTracking) {
         debugPrint("menuTrackingEventHandler - \(date) - kEventClassMenu - kEventMenuBeginTracking")
-        // TODO: Add Modifier Watcher
       } else if eventKind == OSType(kEventMenuEndTracking) {
         debugPrint("menuTrackingEventHandler - \(date) - kEventClassMenu - kEventMenuEndTracking")
-
-        // TODO: Remove Modifier Watcher
         appDelegate.optionModifierEnabled = false
       } else if eventKind == OSType(kEventMenuDrawItem) {
         //        *    --> kEventParamMenuItemIndex (in, typeMenuItemIndex)

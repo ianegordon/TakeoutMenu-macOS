@@ -11,11 +11,11 @@ import AppKit
 class CustomDelegate: NSObject, NSMenuDelegate {
 
   func menuWillOpen(_ menu: NSMenu) {
-    debugPrint("menuWillOpen")
+    debugPrint("Delegate : menuWillOpen")
   }
   
   func menuDidClose(_ menu: NSMenu) {
-    debugPrint("menuDidClose")
+    debugPrint("Delegate : menuDidClose")
   }
   
   func menuHasKeyEquivalent(_ menu: NSMenu,
@@ -29,6 +29,10 @@ class CustomDelegate: NSObject, NSMenuDelegate {
   
   func menu(_ menu: NSMenu,
             willHighlight item: NSMenuItem?) {
-    debugPrint("menu:willHighlight:")
+    debugPrint("Delegate : menu:willHighlight:")
+  }
+  
+  func menuNeedsUpdate(_ menu: NSMenu) {
+    debugPrint("Delegate : menuNeedsUpdate")
   }
 }
