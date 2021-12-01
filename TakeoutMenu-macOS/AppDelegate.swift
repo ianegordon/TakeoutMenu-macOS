@@ -161,7 +161,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       let key = "\(index)"
       
       //TODO: Identify why keyEquivalent isn't working
-      let customItem = NSMenuItem(title: title, action: #selector(menuItemClicked), keyEquivalent: key)
+      let customItem = NSMenuItem(title: title, action: #selector(menuItemClicked), keyEquivalent: "")
       if Bundle.main.loadNibNamed("CustomMenuView", owner: self, topLevelObjects: &topLevelObjects) {
         let xibView = topLevelObjects!.first(where: { $0 is CustomMenuView }) as? CustomMenuView
         if let itemView = xibView {
@@ -177,7 +177,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       menu.addItem(customItem)
       customMenuItems.append(customItem)
 
-      // Fake Entries
+      // Hidden Entries to handle key equivalents
       let standardItem = NSMenuItem(title: title, action: #selector(menuItemClicked), keyEquivalent: key)
       standardItem.isHidden = true
       standardItem.allowsKeyEquivalentWhenHidden = true
@@ -186,7 +186,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       let optionTitle = "OPTION + " + title
       let optionItem = NSMenuItem(title: optionTitle, action: #selector(optionMenuItemClicked), keyEquivalent: key)
       optionItem.isHidden = true
-      optionItem.isAlternate = true
       optionItem.allowsKeyEquivalentWhenHidden = true
       optionItem.keyEquivalentModifierMask = [ .option ]
       menu.addItem(optionItem)

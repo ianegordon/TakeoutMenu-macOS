@@ -37,6 +37,12 @@
 // LINK: Event Monitors
 // https://isapozhnik.com/articles/status-item/
 
+// LINK: Hacking NSMenu keyboard navigation
+// https://kazakov.life/2017/05/18/hacking-nsmenu-keyboard-navigation/
+
+// LINK: Intercepting NSMenu key events
+// https://stackoverflow.com/questions/31968959/intercepting-nsmenu-key-events
+
 import Cocoa
 
 class CustomMenuView: NSView {
@@ -71,6 +77,14 @@ class CustomMenuView: NSView {
         needsDisplay = true
       }
     }
+  }
+  
+  override func viewDidMoveToWindow() {
+    super.viewDidMoveToWindow()
+    
+    debugPrint("viewDidMoveToWindow")
+    
+    //TODO Implemnent https://kazakov.life/2017/05/18/hacking-nsmenu-keyboard-navigation/
   }
   
   /// Custom implementation of mouseUp that will invoke the target/action from the enclosing menuitem
