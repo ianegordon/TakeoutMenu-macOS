@@ -106,10 +106,10 @@ class CustomMenuView: NSView {
   
   // The following key methods are NOT expected to be invoked
   override func keyUp(with event: NSEvent) {
-    debugPrint("Custom MenuItemView keyUp")
+    debugPrint("**** Custom MenuItemView keyUp")
   }
   override func keyDown(with event: NSEvent) {
-    debugPrint("Custom MenuItemView keyDown")
+    debugPrint("**** Custom MenuItemView keyDown")
   }
   
   override func draw(_ dirtyRect: NSRect) {

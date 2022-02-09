@@ -78,12 +78,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     print("APP : statusBarClicked")
   }
   
-  @objc func menuItemClicked() {
-    print("APP : menuItemClicked")
+  @objc func menuItemClicked(sender: Any) {
+    let senderLabel: String
+    if let menuItem = sender as? NSMenuItem {
+      senderLabel = menuItem.debugDescription
+    } else {
+      senderLabel = "Unknown Sender"
+    }
+    print("APP : menuItemClicked \(senderLabel)")
   }
   
-  @objc func optionMenuItemClicked() {
-    print("APP : optionMenuItemClicked")
+  @objc func optionMenuItemClicked(sender: Any) {
+    let senderLabel: String
+    if let menuItem = sender as? NSMenuItem {
+      senderLabel = menuItem.debugDescription
+    } else {
+      senderLabel = "Unknown Sender"
+    }
+    print("APP : optionMenuItemClicked \(senderLabel)")
   }
   
   @objc func quitClicked() {
@@ -328,6 +340,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             for menuItem in appDelegate.customMenuItems {
               if let customView = menuItem.view as? CustomMenuView {
                 customView.cursiveLabel.stringValue = title
+                menuItem.title = title
               }
             }
           }
