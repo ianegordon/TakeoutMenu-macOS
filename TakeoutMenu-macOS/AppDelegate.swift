@@ -85,7 +85,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     } else {
       senderLabel = "Unknown Sender"
     }
-    print("APP : menuItemClicked \(senderLabel)")
+
+    let modifierFlags = NSApp.currentEvent?.modifierFlags
+    let isOption = modifierFlags?.contains(.option)
+    let isCommand = modifierFlags?.contains(.command)
+    let isControl = modifierFlags?.contains(.control)
+
+    print("APP : menuItemClicked \(senderLabel) - \(isCommand):\(isOption):\(isControl)")
   }
   
   @objc func optionMenuItemClicked(sender: Any) {
