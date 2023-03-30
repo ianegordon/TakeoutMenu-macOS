@@ -29,6 +29,9 @@
 // LINK: Tracking modifier keys
 // https://www.generacodice.com/en/articolo/4433510/hide-show-menu-item-in-application-s-main-menu-by-pressing-option-key
 
+// LINK: Hacking NSMenu Keyboard Navigation  (Very helpful)
+// https://kazakov.life/2017/05/18/hacking-nsmenu-keyboard-navigation/
+
 import Cocoa
 import Carbon
 
@@ -85,12 +88,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     } else {
       senderLabel = "Unknown Sender"
     }
-
+    
     let modifierFlags = NSApp.currentEvent?.modifierFlags
     let isOption = modifierFlags?.contains(.option)
     let isCommand = modifierFlags?.contains(.command)
     let isControl = modifierFlags?.contains(.control)
-
+    
     print("APP : menuItemClicked \(senderLabel) - \(isCommand):\(isOption):\(isControl)")
   }
   
@@ -129,7 +132,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     //    CGEventFlags flags = CGEventGetFlags (event);
     //    BOOL optionKeyIsPressed = (flags & kCGEventFlagMaskAlternate) == kCGEventFlagMaskAlternate;
     //    CFRelease(event);
-
+    
     //TODO: Capture modifer mask and utilize in the custom draw rather than just capturing the state of .option
     //???: Should this set optionModifierEnabled to false if the modifier flag does NOT contain .option?
     if let event = NSApplication.shared.currentEvent {
@@ -178,7 +181,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       
       let key = "\(index)"
       
-      //TODO: Identify why keyEquivalent isn't working
+      //NOTE: keyEquivalent handling is pushed to two hidden menuItems below (standard and option)
       let customItem = NSMenuItem(title: title, action: #selector(menuItemClicked), keyEquivalent: "")
       if Bundle.main.loadNibNamed("CustomMenuView", owner: self, topLevelObjects: &topLevelObjects) {
         let xibView = topLevelObjects!.first(where: { $0 is CustomMenuView }) as? CustomMenuView
@@ -189,23 +192,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
           itemView.frame = CGRect(origin: .zero, size: itemView.fittingSize)
           
           customItem.view = itemView
+          //???: Do I need customItem.target = self
+          // customItem.target = self
         }
       }
-      //???: Do I need customItem.target = self
       menu.addItem(customItem)
       customMenuItems.append(customItem)
-
+      
       // Hidden Entries to handle key equivalents
       let standardItem = NSMenuItem(title: title, action: #selector(menuItemClicked), keyEquivalent: key)
       standardItem.isHidden = true
       standardItem.allowsKeyEquivalentWhenHidden = true
       menu.addItem(standardItem)
-
+      
       let optionTitle = "OPTION + " + title
       let optionItem = NSMenuItem(title: optionTitle, action: #selector(optionMenuItemClicked), keyEquivalent: key)
+      optionItem.keyEquivalentModifierMask = [ .option ]
       optionItem.isHidden = true
       optionItem.allowsKeyEquivalentWhenHidden = true
-      optionItem.keyEquivalentModifierMask = [ .option ]
       menu.addItem(optionItem)
     }
     
@@ -225,6 +229,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: OSType(kEventRawKeyModifiersChanged)),
       EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: OSType(kEventHotKeyPressed)),
       EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: OSType(kEventHotKeyReleased)),
+      EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: OSType(kEventRawKeyDown)),
       // MENU
       EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuOpening)),
       EventTypeSpec(eventClass: OSType(kEventClassMenu), eventKind: OSType(kEventMenuClosed)),
@@ -270,7 +275,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   
   //  (_ inHandlerCallRef: EventHandlerCallRef?, _ eventRef: EventRef?, userData: UnsafeMutableRawPointer?) -> OSStatus in {
   static private let menuTrackingEventHandler: EventHandlerProcPtr = {
-    (callRef: EventHandlerCallRef?, eventRef: EventRef?, rawPointer: UnsafeMutableRawPointer?) in
+    (callRef: EventHandlerCallRef?, eventRef: EventRef?, rawPointer: UnsafeMutableRawPointer?) -> OSStatus in
+
+    guard eventRef != nil && rawPointer != nil else {
+      print("**** Nil eventRef or rawPointer")
+      return noErr
+    }
+
     let date = Date()
     
     let appDelegate: AppDelegate
@@ -297,6 +308,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       } else if eventKind == OSType(kEventHotKeyReleased) {
         //???: WHY IS THIS NOT INVOKED?
         debugPrint("!!! kEventHotKeyReleased")
+      } else if eventKind == OSType(kEventRawKeyDown) {
+        debugPrint("!!! kEventRawKeyDown")
+        // IFF this is enter AND a Custom Menu View is selected, invoke the menu item's action (including modifier values) and close menu
+        if let itemSelected = appDelegate.menu.highlightedItem {
+//           type(of: itemSelected.isLike) == CustomMenuView.Type {
+          print("itemSelected - \(itemSelected)")
+        }
       } else if eventKind == OSType(kEventRawKeyModifiersChanged) {
         //???: Why is this invoked twice?
         var regenerateMenu = false
@@ -354,8 +372,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
           debugPrint("menuTrackingEventHandler - \(date) - kEventClassKeyboard - kEventRawKeyModifiersChanged - COMMAND-ONLY")
         }
       }
-    
-    // MENU MENU MENU MENU MENU MENU MENU
+      
+      // MENU MENU MENU MENU MENU MENU MENU
     } else if eventClass == OSType(kEventClassMenu) {
       if eventKind == OSType(kEventMenuTargetItem) {
         debugPrint("menuTrackingEventHandler - \(date) - kEventClassMenu - kEventMenuTargetItem")
@@ -413,7 +431,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     return CallNextEventHandler(callRef, eventRef)
   }
- 
+  
 }
 
 

@@ -82,43 +82,54 @@ class CustomMenuView: NSView {
   override func viewDidMoveToWindow() {
     super.viewDidMoveToWindow()
     
-    debugPrint("viewDidMoveToWindow")
+    debugPrint("CMV: viewDidMoveToWindow")
     
     //TODO Implemnent https://kazakov.life/2017/05/18/hacking-nsmenu-keyboard-navigation/
   }
   
   /// Custom implementation of mouseUp that will invoke the target/action from the enclosing menuitem
   override func mouseUp(with event: NSEvent) {
-    debugPrint("Custom MenuItemView mouseUp")
+    debugPrint("**** CMV: mouseUp")
+
+    invokeAction()
+    
+    //TODO Should also set dirty flag for redraw since it current draws in a mouseOver state when the menu is re-shown
+    self.setNeedsDisplay(self.bounds)
+  }
+
+  //  override func mouseEntered(with theEvent: NSEvent) { highlighted = true }
+  //  override func mouseExited(with theEvent: NSEvent) { highlighted = false }
+    
+  
+  /// Cancel tracking the menu and perform the item's action
+  public func invokeAction() {
     if let menuItem = self.enclosingMenuItem,
        let menu = menuItem.menu {
       menu.cancelTracking()
       let itemIndex = menu.index(of: menuItem)
       menu.performActionForItem(at: itemIndex)
     }
-    
-    //TODO Should also set dirty flag for redraw since it current draws in a mouseOver state when the menu is re-shown
-    self.setNeedsDisplay(self.bounds)
   }
   
-//  override func mouseEntered(with theEvent: NSEvent) { highlighted = true }
-//  override func mouseExited(with theEvent: NSEvent) { highlighted = false }
+  // TODO override 'keyDown' equivalent with same code as mouseUp
   
   // The following key methods are NOT expected to be invoked
   override func keyUp(with event: NSEvent) {
-    debugPrint("**** Custom MenuItemView keyUp")
+    debugPrint("**** CMV: keyUp")
   }
   override func keyDown(with event: NSEvent) {
-    debugPrint("**** Custom MenuItemView keyDown")
+    debugPrint("**** CMV: keyDown")
   }
   
   override func draw(_ dirtyRect: NSRect) {
     super.draw(dirtyRect)
     
-    let foregroundColor: NSColor
     
-    if self.enclosingMenuItem != nil,
-       self.enclosingMenuItem!.isHighlighted {
+    // HighlightEffect visibility depends on the enclosing menu item
+    let displayHighlightEffet = (self.enclosingMenuItem != nil && self.enclosingMenuItem!.isHighlighted)
+
+    let foregroundColor: NSColor
+    if displayHighlightEffet {
       foregroundColor = NSColor.selectedMenuItemTextColor
       highlightEffectView.isHidden = false
     } else {
@@ -126,9 +137,9 @@ class CustomMenuView: NSView {
       highlightEffectView.isHidden = true
     }
     self.cursiveLabel.textColor = foregroundColor
-    
-    let isHighlighted = !highlightEffectView.isHidden  // KMKMKM Used for logging only
-    
+
+    // KMKMKM Used for logging only
+//    let isHighlighted = !highlightEffectView.isHidden
 //    if isHighlighted {
 //      debugPrint("Draw Custom HL")
 //    } else {
