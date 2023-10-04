@@ -62,7 +62,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // Setup Menu
     menu.autoenablesItems = false
     menu.delegate = customMenuDelegate
+    self.populateMenu()
     self.statusItem.menu = menu
+    
     
     // Attach Carbon Event Listener / Handler
     attachCarbonEventHandling( {
