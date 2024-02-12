@@ -74,9 +74,22 @@ class CustomMenuView: NSView {
   var highlighted : Bool = false {
     didSet {
       if oldValue != highlighted {
-        needsDisplay = true
+        debugPrint("CMV: highlighted changed to \(highlighted)")
+        self.needsDisplay = true
       }
     }
+  }
+
+  override func viewWillMove(toSuperview newSuperview: NSView?) {
+    super.viewWillMove(toSuperview: newSuperview)
+    
+    debugPrint("CMV: viewWillMove:toSuperview \(newSuperview)")
+  }
+  
+  override func viewWillMove(toWindow newWindow: NSWindow?) {
+    super.viewWillMove(toWindow: newWindow)
+    
+    debugPrint("CMV: viewWillMove:ToWindow \(newWindow)")
   }
   
   override func viewDidMoveToWindow() {
@@ -105,6 +118,7 @@ class CustomMenuView: NSView {
   public func invokeAction() {
     if let menuItem = self.enclosingMenuItem,
        let menu = menuItem.menu {
+      debugPrint("**** CMV: invokeAction")
       menu.cancelTracking()
       let itemIndex = menu.index(of: menuItem)
       menu.performActionForItem(at: itemIndex)
@@ -121,6 +135,9 @@ class CustomMenuView: NSView {
     debugPrint("**** CMV: keyDown")
   }
   
+  override func flagsChanged(with event: NSEvent)  {
+    debugPrint("**** CMV: flagsChanged")
+  }
   override func draw(_ dirtyRect: NSRect) {
     super.draw(dirtyRect)
     

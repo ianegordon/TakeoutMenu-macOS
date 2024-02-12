@@ -120,7 +120,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   // MARK: Internal
   //TODO: Should this menu get generated once and then items added, removed, and adjusted?
   func populateMenu() {
-    
+    debugPrint("POPULATE MENU")
+
     // Deprecated
     // Useless after macOS 10.6
     // Disable partial changes
@@ -181,8 +182,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         title = "ZZZ + [Custom Menu Item \(index)]"
       }
       
-      let key = "\(index)"
-      
       //NOTE: keyEquivalent handling is pushed to two hidden menuItems below (standard and option)
       let customItem = NSMenuItem(title: title, action: #selector(menuItemClicked), keyEquivalent: "")
       if Bundle.main.loadNibNamed("CustomMenuView", owner: self, topLevelObjects: &topLevelObjects) {
@@ -202,6 +201,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       customMenuItems.append(customItem)
       
       // Hidden Entries to handle key equivalents
+      let key = "\(index)"
+      
       let standardItem = NSMenuItem(title: title, action: #selector(menuItemClicked), keyEquivalent: key)
       standardItem.isHidden = true
       standardItem.allowsKeyEquivalentWhenHidden = true
