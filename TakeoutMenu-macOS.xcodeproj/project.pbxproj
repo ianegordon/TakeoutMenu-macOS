@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		40792C642B82A62200CE347B /* BulletinMenuItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40792C622B82A62200CE347B /* BulletinMenuItemView.swift */; };
+		40792C652B82A62200CE347B /* BulletinMenuItemView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 40792C632B82A62200CE347B /* BulletinMenuItemView.xib */; };
+		40792C672B82A6AA00CE347B /* BulletinMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40792C662B82A6AA00CE347B /* BulletinMenuItem.swift */; };
 		40C85E5724C4C8320042106A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C85E5624C4C8320042106A /* AppDelegate.swift */; };
 		40C85E5924C4C8320042106A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C85E5824C4C8320042106A /* ViewController.swift */; };
 		40C85E5B24C4C8340042106A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 40C85E5A24C4C8340042106A /* Assets.xcassets */; };
@@ -17,6 +20,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		40792C622B82A62200CE347B /* BulletinMenuItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BulletinMenuItemView.swift; sourceTree = "<group>"; };
+		40792C632B82A62200CE347B /* BulletinMenuItemView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BulletinMenuItemView.xib; sourceTree = "<group>"; };
+		40792C662B82A6AA00CE347B /* BulletinMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulletinMenuItem.swift; sourceTree = "<group>"; };
 		40C85E5324C4C8320042106A /* TakeoutMenu-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TakeoutMenu-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		40C85E5624C4C8320042106A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		40C85E5824C4C8320042106A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -59,6 +65,8 @@
 		40C85E5524C4C8320042106A /* TakeoutMenu-macOS */ = {
 			isa = PBXGroup;
 			children = (
+				40792C622B82A62200CE347B /* BulletinMenuItemView.swift */,
+				40792C632B82A62200CE347B /* BulletinMenuItemView.xib */,
 				40C85E5624C4C8320042106A /* AppDelegate.swift */,
 				40C85E6824C4D4910042106A /* CustomMenuView.swift */,
 				40C85E6624C4D44A0042106A /* CustomMenuView.xib */,
@@ -68,6 +76,7 @@
 				40C85E5C24C4C8340042106A /* Main.storyboard */,
 				40C85E5F24C4C8340042106A /* Info.plist */,
 				40C85E6024C4C8340042106A /* TakeoutMenu_macOS.entitlements */,
+				40792C662B82A6AA00CE347B /* BulletinMenuItem.swift */,
 			);
 			path = "TakeoutMenu-macOS";
 			sourceTree = "<group>";
@@ -133,6 +142,7 @@
 				40C85E5B24C4C8340042106A /* Assets.xcassets in Resources */,
 				40C85E5E24C4C8340042106A /* Main.storyboard in Resources */,
 				40C85E6724C4D44A0042106A /* CustomMenuView.xib in Resources */,
+				40792C652B82A62200CE347B /* BulletinMenuItemView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -147,6 +157,8 @@
 				40E1158727571734000E8CA9 /* MenuDelegate.swift in Sources */,
 				40C85E5724C4C8320042106A /* AppDelegate.swift in Sources */,
 				40C85E6924C4D4910042106A /* CustomMenuView.swift in Sources */,
+				40792C672B82A6AA00CE347B /* BulletinMenuItem.swift in Sources */,
+				40792C642B82A62200CE347B /* BulletinMenuItemView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

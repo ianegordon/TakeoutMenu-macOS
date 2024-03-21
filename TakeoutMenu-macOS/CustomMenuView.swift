@@ -136,9 +136,11 @@ class CustomMenuView: NSView {
   }
   
   override func flagsChanged(with event: NSEvent)  {
-    debugPrint("**** CMV: flagsChanged")
+    debugPrint("**** CMV: flagsChanged(event)")
   }
   override func draw(_ dirtyRect: NSRect) {
+    debugPrint("**** CMV: draw(dirtyRect)")
+
     super.draw(dirtyRect)
     
     

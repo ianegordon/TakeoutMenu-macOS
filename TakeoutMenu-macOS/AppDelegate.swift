@@ -57,7 +57,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     self.statusItem.button?.title = "∞"
     self.statusItem.button?.imagePosition = .imageLeading
     self.statusItem.button?.target = self
-    self.statusItem.button?.action = #selector(statusBarClicked)
+    self.statusItem.button?.action = #selector(statusBarClicked) // This appears to never get called?
     
     // Setup Menu
     menu.autoenablesItems = false
@@ -80,6 +80,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   
   //MARK: Actions
   @objc func statusBarClicked() {
+    // This appears to never get called?
     print("APP : statusBarClicked")
   }
   
@@ -205,6 +206,51 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       
       let standardItem = NSMenuItem(title: title, action: #selector(menuItemClicked), keyEquivalent: key)
       standardItem.isHidden = true
+      standardItem.allowsKeyEquivalentWhenHidden = true
+      menu.addItem(standardItem)
+      
+      let optionTitle = "OPTION + " + title
+      let optionItem = NSMenuItem(title: optionTitle, action: #selector(optionMenuItemClicked), keyEquivalent: key)
+      optionItem.keyEquivalentModifierMask = [ .option ]
+      optionItem.isHidden = true
+      optionItem.allowsKeyEquivalentWhenHidden = true
+      menu.addItem(optionItem)
+    }
+    
+    for index in 5...6 {
+      var topLevelObjects : NSArray?
+      
+      let title: String
+      if optionModifierEnabled {
+        title = "OPTION + [Bulletin Menu Item \(index)]"
+      } else {
+        title = "ZZZ + [Bulletin Menu Item \(index)]"
+      }
+      
+      //NOTE: keyEquivalent handling is pushed to two hidden menuItems below (standard and option)
+      let customItem = NSMenuItem(title: title, action: #selector(menuItemClicked), keyEquivalent: "")
+      if Bundle.main.loadNibNamed("BulletinMenuItemView", owner: self, topLevelObjects: &topLevelObjects) {
+        let xibView = topLevelObjects!.first(where: { $0 is BulletinMenuItemView }) as? BulletinMenuItemView
+        if let itemView = xibView {
+          itemView.bulletinLabel.stringValue = title
+          itemView.detailLabel.stringValue = "details, details, details"
+          
+          //!!! If we do not explicitly set the size, the menu will use the starting size from the XIB.
+          itemView.frame = CGRect(origin: .zero, size: itemView.fittingSize)
+          
+          customItem.view = itemView
+          //???: Do I need customItem.target = self
+          // customItem.target = self
+        }
+      }
+      menu.addItem(customItem)
+      customMenuItems.append(customItem)
+      
+      // Hidden Entries to handle key equivalents
+      let key = "\(index)"
+      
+      let standardItem = NSMenuItem(title: title, action: #selector(menuItemClicked), keyEquivalent: key)
+//      standardItem.isHidden = true
       standardItem.allowsKeyEquivalentWhenHidden = true
       menu.addItem(standardItem)
       
